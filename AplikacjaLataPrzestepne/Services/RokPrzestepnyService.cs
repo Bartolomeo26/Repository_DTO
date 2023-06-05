@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AplikacjaLataPrzestepne.Interfaces;
 using AplikacjaLataPrzestepne.ViewModels.RokPrzestepny;
-
+using NuGet.Packaging.Signing;
 
 namespace AplikacjaLataPrzestepne.Services
 {
@@ -52,7 +52,10 @@ namespace AplikacjaLataPrzestepne.Services
                 await _context.SaveChangesAsync();
             }
         }
-
+        public void DeleteYears(int id)
+        {
+            _rokRepository.DeleteYear(id);
+        }
         public ListRokVM GetYearsForList()
         {
             var lata = _rokRepository.GetActiveLeapYears();
@@ -60,7 +63,7 @@ namespace AplikacjaLataPrzestepne.Services
             result.Years = new List<RokVM>();
             foreach (var rok in lata)
             {
-                // mapowanie obiektów
+                
                 var rVM = new RokVM()
                 {
                     Id = rok.Id,
@@ -71,6 +74,7 @@ namespace AplikacjaLataPrzestepne.Services
                     user_id = rok.user_id,
                     login = rok.login
                 };
+                
                 result.Years.Add(rVM);
             }
             return result;

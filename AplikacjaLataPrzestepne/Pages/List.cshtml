@@ -40,7 +40,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Records.Years)
+        @foreach (var item in Model.LataPrzestepne)
         {
             <tr>
                 <td>
@@ -75,13 +75,12 @@
     </tbody>
 </table>
 
-@*@{
+@{
     var prevDisabled = !Model.LataPrzestepne.HasPreviousPage ? "disabled" : "";
     var nextDisabled = !Model.LataPrzestepne.HasNextPage ? "disabled" : "";
-}*@
+}
 
-<p>@ViewData["message"]</p>
-@*<a asp-page="./List"
+<a asp-page="./List"
    asp-route-sortOrder="@Model.CurrentSort"
    asp-route-pageIndex="@(Model.LataPrzestepne.PageIndex - 1)"
    asp-route-currentFilter="@Model.CurrentFilter"
@@ -89,9 +88,8 @@
     Previous
 </a>
 <a asp-page="./List"
-   
    asp-route-pageIndex="@(Model.LataPrzestepne.PageIndex + 1)"
    asp-route-currentFilter="@Model.CurrentFilter"
    class="btn btn-primary @nextDisabled">
     Next
-</a>*@
+</a>

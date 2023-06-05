@@ -16,5 +16,15 @@ namespace AplikacjaLataPrzestepne.Repository
         {
             return _context.LeapData;
         }
+        public void DeleteYear(int id)
+        {
+            var _post = _context.LeapData.Find(id);
+            if (_post != null)
+            {
+                _post.Id = id; // Set a permanent value for SearchId
+                _context.LeapData.Remove(_post);
+                _context.SaveChanges();
+            }
+        }
     }
 }

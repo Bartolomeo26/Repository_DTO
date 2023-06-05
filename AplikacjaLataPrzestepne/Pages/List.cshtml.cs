@@ -18,7 +18,7 @@ namespace AplikacjaLataPrzestepne.Pages
 {
     public class ListModel : PageModel
     {
-        public IEnumerable<RokPrzestepny> LeapYearList;
+        public IEnumerable<RokVM> LeapYearList;
         private readonly ILogger<IndexModel> _logger;
         private readonly IConfiguration Configuration;
         private readonly IRokPrzestepnyService _rokService;
@@ -31,14 +31,13 @@ namespace AplikacjaLataPrzestepne.Pages
             _contextAccessor = contextAccessor;
             _rokService = rokService;
         }
-        public RokPrzestepny obiekt_doSzukania { get; set; } = new RokPrzestepny();
+        public RokVM obiekt_doSzukania { get; set; } = new RokVM();
         public string NameSort { get; set; }
         public string DateSort { get; set; }
         public string CurrentFilter { get; set; }
         public string CurrentSort { get; set; }
-        public PaginatedList<RokPrzestepny> LataPrzestepne { get; set; }
-        public async Task OnGetAsync(string sortOrder,
-            string currentFilter, string searchString, int? pageIndex)
+        public PaginatedList<RokVM> LataPrzestepne { get; set; }
+        public async Task OnGetAsync(string sortOrder, string currentFilter, string searchString, int? pageIndex)
         {
             if (_contextAccessor.HttpContext.User.Identity.IsAuthenticated)
             {
@@ -74,16 +73,17 @@ namespace AplikacjaLataPrzestepne.Pages
             
             var lataQueryable = Records.Years.AsQueryable();
             var pageSize = Configuration.GetValue("PageSize", 4);
-           /*LataPrzestepne = PaginatedList<RokPrzestepny>.CreateAsync(Records.Years, pageIndex ?? 1, pageSize);*/
-            
+            LataPrzestepne = await PaginatedList<RokVM>.CreateAsync(Records.Years, pageIndex ?? 1, pageSize);
+
         }
-       /*
+       
         public IActionResult OnPost(int id_User)
-        {
-            _rokService.
+        {   
+
+            _rokService.DeleteYears(id_User);
            
             return RedirectToAction("Async");
         }
-       */
+       
     }
 }
