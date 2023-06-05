@@ -4,6 +4,8 @@ using AplikacjaLataPrzestepne.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
+using AplikacjaLataPrzestepne.Interfaces;
+using AplikacjaLataPrzestepne.Repository;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -12,7 +14,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDbContext<Wyszukiwania>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("LeapYears")));
-builder.Services.AddScoped<RokPrzestepnyInterface, RokPrzestepnyService>();
+builder.Services.AddTransient<IRokPrzestepnyService, RokPrzestepnyService>();
+builder.Services.AddTransient<IRokPrzestepnyRepository, RokRepository>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)

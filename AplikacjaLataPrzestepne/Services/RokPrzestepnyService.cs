@@ -3,17 +3,22 @@ using AplikacjaLataPrzestepne.Data;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using System;
+using AplikacjaLataPrzestepne.Interfaces;
+using AplikacjaLataPrzestepne.ViewModels.RokPrzestepny;
+
 
 namespace AplikacjaLataPrzestepne.Services
 {
-    public class RokPrzestepnyService : RokPrzestepnyInterface
+    public class RokPrzestepnyService : IRokPrzestepnyService
     {
         private readonly Wyszukiwania _context;
+        private readonly IRokPrzestepnyRepository _rokRepository;
 
-        public RokPrzestepnyService(Wyszukiwania context)
+        public RokPrzestepnyService(Wyszukiwania context,
+            IRokPrzestepnyRepository personRepository)
         {
             _context = context;
+            _rokRepository = personRepository;
         }
 
         public async Task<List<RokPrzestepny>> GetAllRokAsync()
@@ -38,14 +43,37 @@ namespace AplikacjaLataPrzestepne.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteRokAsync(int id, RokPrzestepny r)
+        public async Task DeleteRokAsync(int id)
         {
-            r = _context.LeapData.Find(id);
-            
-            _context.LeapData.Remove(r);
+            var rok = await _context.LeapData.FindAsync(id);
+            if (rok != null)
+            {
+                _context.LeapData.Remove(rok);
                 await _context.SaveChangesAsync();
-            
+            }
         }
 
+        public ListRokVM GetYearsForList()
+        {
+            var lata = _rokRepository.GetActiveLeapYears();
+            ListRokVM result = new ListRokVM();
+            result.Years = new List<RokVM>();
+            foreach (var rok in lata)
+            {
+                // mapowanie obiektów
+                var rVM = new RokVM()
+                {
+                    Id = rok.Id,
+                    Imie = rok.Imie,
+                    Rok = rok.Rok,
+                    czy_przestepny = rok.czy_przestepny,
+                    Data = rok.Data,
+                    user_id = rok.user_id,
+                    login = rok.login
+                };
+                result.Years.Add(rVM);
+            }
+            return result;
+        }
     }
 }

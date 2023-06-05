@@ -10,6 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using AplikacjaLataPrzestepne.Services;
 using System.Configuration;
+using AplikacjaLataPrzestepne.Interfaces;
+using AplikacjaLataPrzestepne.ViewModels.RokPrzestepny;
+
 
 namespace AplikacjaLataPrzestepne.Pages
 {
@@ -18,10 +21,10 @@ namespace AplikacjaLataPrzestepne.Pages
         public IEnumerable<RokPrzestepny> LeapYearList;
         private readonly ILogger<IndexModel> _logger;
         private readonly IConfiguration Configuration;
-        private readonly RokPrzestepnyInterface _rokService;
+        private readonly IRokPrzestepnyService _rokService;
         private readonly IHttpContextAccessor _contextAccessor;
-
-        public ListModel(ILogger<IndexModel> logger, IConfiguration configuration, IHttpContextAccessor contextAccessor, Wyszukiwania context, RokPrzestepnyInterface rokService)
+        public ListRokVM Records { get; set; }
+        public ListModel(ILogger<IndexModel> logger, IConfiguration configuration, IHttpContextAccessor contextAccessor, Wyszukiwania context, IRokPrzestepnyService rokService)
         {
             _logger = logger;
             Configuration = configuration;
@@ -46,17 +49,17 @@ namespace AplikacjaLataPrzestepne.Pages
             CurrentSort = sortOrder;
             NameSort = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             DateSort = sortOrder == "Date" ? "date_desc" : "Date";
-            var lata = await _rokService.GetAllRokAsync();
+            Records = _rokService.GetYearsForList();
             switch (sortOrder)
             {
                 case "Date":
-                    lata = lata.OrderBy(s => s.Data).ToList();
+                    Records.Years = Records.Years.OrderBy(s => s.Data).ToList();
                     break;
                 case "date_desc":
-                    lata = lata.OrderByDescending(s => s.Data).ToList();
+                    Records.Years = Records.Years.OrderByDescending(s => s.Data).ToList();
                     break;
                 default:
-                    lata = lata.OrderByDescending(s => s.Data).ToList();
+                    Records.Years = Records.Years.OrderByDescending(s => s.Data).ToList();
                     break;
             }
             if (searchString != null)
@@ -69,16 +72,18 @@ namespace AplikacjaLataPrzestepne.Pages
             }
 
             
-            var lataQueryable = lata.AsQueryable();
-            var pageSize = Configuration.GetValue("PageSize", 20);
-            LataPrzestepne = await PaginatedList<RokPrzestepny>.CreateAsync(lata, pageIndex ?? 1, pageSize);
+            var lataQueryable = Records.Years.AsQueryable();
+            var pageSize = Configuration.GetValue("PageSize", 4);
+           /*LataPrzestepne = PaginatedList<RokPrzestepny>.CreateAsync(Records.Years, pageIndex ?? 1, pageSize);*/
             
         }
+       /*
         public IActionResult OnPost(int id_User)
         {
-            _rokService.DeleteRokAsync(id_User, obiekt_doSzukania);
+            _rokService.
            
             return RedirectToAction("Async");
         }
+       */
     }
 }
