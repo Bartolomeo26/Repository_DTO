@@ -23,7 +23,7 @@ namespace AplikacjaLataPrzestepne.Pages
         private readonly IConfiguration Configuration;
         private readonly IRokPrzestepnyService _rokService;
         private readonly IHttpContextAccessor _contextAccessor;
-        public ListRokVM Records { get; set; }
+        public ListRokVM ListaLat { get; set;}
         public ListModel(ILogger<IndexModel> logger, IConfiguration configuration, IHttpContextAccessor contextAccessor, Wyszukiwania context, IRokPrzestepnyService rokService)
         {
             _logger = logger;
@@ -48,17 +48,17 @@ namespace AplikacjaLataPrzestepne.Pages
             CurrentSort = sortOrder;
             NameSort = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             DateSort = sortOrder == "Date" ? "date_desc" : "Date";
-            Records = _rokService.GetYearsForList();
+            ListaLat = _rokService.GetYearsForList();
             switch (sortOrder)
             {
                 case "Date":
-                    Records.Years = Records.Years.OrderBy(s => s.Data).ToList();
+                    ListaLat.Years = ListaLat.Years.OrderBy(s => s.Data).ToList();
                     break;
                 case "date_desc":
-                    Records.Years = Records.Years.OrderByDescending(s => s.Data).ToList();
+                    ListaLat.Years = ListaLat.Years.OrderByDescending(s => s.Data).ToList();
                     break;
                 default:
-                    Records.Years = Records.Years.OrderByDescending(s => s.Data).ToList();
+                    ListaLat.Years = ListaLat.Years.OrderByDescending(s => s.Data).ToList();
                     break;
             }
             if (searchString != null)
@@ -71,9 +71,9 @@ namespace AplikacjaLataPrzestepne.Pages
             }
 
             
-            var lataQueryable = Records.Years.AsQueryable();
+            var lataQueryable = ListaLat.Years.AsQueryable();
             var pageSize = Configuration.GetValue("PageSize", 4);
-            LataPrzestepne = await PaginatedList<RokVM>.CreateAsync(Records.Years, pageIndex ?? 1, pageSize);
+            LataPrzestepne = await PaginatedList<RokVM>.CreateAsync(ListaLat.Years, pageIndex ?? 1, pageSize);
 
         }
        
